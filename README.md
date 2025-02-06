@@ -20,15 +20,26 @@ A self-hosted AI document summarizer and Q&A backend that processes documents lo
   - Embeddings: `all-MiniLM-L6-v2`
   - Vector Search: FAISS
 
-## Installation
+## Setup & Installation
 
+### Windows Environment Setup
+1. Create virtual environment:
 ```bash
-# Install required packages
+python -m venv venv
+```
+
+2. Activate virtual environment:
+```bash
+venv\Scripts\activate
+```
+
+3. Install required packages:
+```bash
 pip install fastapi uvicorn python-multipart PyPDF2 transformers sentence-transformers faiss-cpu torch
 ```
 
 # Run the server
-```
+```bash
 python smartdoc_backend.py
 ```
 Server will be available at `http://localhost:8000`
