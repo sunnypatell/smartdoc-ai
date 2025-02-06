@@ -21,7 +21,7 @@ export default function DocumentsPage() {
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const response = await fetch("http://0.0.0.0:8000/documents")
+        const response = await fetch("http://127.0.0.1:8000/documents")
         if (!response.ok) {
           throw new Error("Failed to fetch documents")
         }

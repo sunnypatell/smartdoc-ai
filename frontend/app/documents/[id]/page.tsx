@@ -38,7 +38,7 @@ export default function DocumentPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const fetchDocumentInfo = async () => {
       try {
-        const response = await fetch(`http://0.0.0.0:8000/document/${params.id}`)
+        const response = await fetch(`http://127.0.0.1:8000/document/${params.id}`)
         if (!response.ok) {
           throw new Error("Failed to fetch document info")
         }
@@ -57,7 +57,7 @@ export default function DocumentPage({ params }: { params: { id: string } }) {
   const handleSummarize = async () => {
     setSummarizing(true)
     try {
-      const response = await fetch(`http://0.0.0.0:8000/document/${params.id}/summary`)
+      const response = await fetch(`http://127.0.0.1:8000/document/${params.id}/summary`)
       if (!response.ok) {
         throw new Error("Failed to fetch summary")
       }
@@ -74,7 +74,7 @@ export default function DocumentPage({ params }: { params: { id: string } }) {
     e.preventDefault()
     setQuerying(true)
     try {
-      const response = await fetch(`http://0.0.0.0:8000/document/${params.id}/query`, {
+      const response = await fetch(`http://127.0.0.1:8000/document/${params.id}/query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +96,7 @@ export default function DocumentPage({ params }: { params: { id: string } }) {
 
   const fetchChunks = async () => {
     try {
-      const response = await fetch(`http://0.0.0.0:8000/document/${params.id}/chunks`)
+      const response = await fetch(`http://127.0.0.1:8000/document/${params.id}/chunks`)
       if (!response.ok) {
         throw new Error("Failed to fetch chunks")
       }

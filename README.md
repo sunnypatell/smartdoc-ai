@@ -40,9 +40,9 @@ pip install fastapi uvicorn python-multipart PyPDF2 transformers sentence-transf
 
 # Run the server
 ```bash
-python smartdoc_backend.py
+uvicorn smartdoc_backend:app --reload
 ```
-Server will be available at `http://localhost:8000`
+Server will be available at `http://127.0.0.1:8000`. If by chance it isn't that IP, check your CLI it will display the available IP it chose and port
 
 > Chute (end) the virtual environment using `deactivate` command 
 
