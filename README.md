@@ -86,15 +86,15 @@ import requests
 
 # Upload a document
 files = {'file': open('document.pdf', 'rb')}
-response = requests.post('http://localhost:8000/upload', files=files)
+response = requests.post('http://127.0.0.1:8000/upload', files=files)
 doc_id = response.json()['doc_id']
 
 # Get a summary
-summary = requests.get(f'http://localhost:8000/document/{doc_id}/summary')
+summary = requests.get(f'http://127.0.0.1:8000/document/{doc_id}/summary')
 
 # Ask a question
 query = {'query': 'What is this document about?'}
-answer = requests.post(f'http://localhost:8000/document/{doc_id}/query', json=query)
+answer = requests.post(f'http://127.0.0.1:8000/document/{doc_id}/query', json=query)
 ```
 
 ## License
