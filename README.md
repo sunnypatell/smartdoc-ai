@@ -1,6 +1,12 @@
-# SmartDoc AI
+<div align="center">
+    <strong style="font-size: 24px;">SmartDoc AI 🤖</strong>
+    <br>
+    A self-hosted AI document summarizer and Q&A system that processes documents locally - no API keys needed.
+</div>
 
-A self-hosted AI document summarizer and Q&A backend that processes documents locally without requiring external API keys or paid services.
+![SmartDoc AI Demo](demo_pics/SmartDocLanding_1.png)
+![SmartDoc AI Demo](demo_pics/SmartDocLanding_2.png)
+
 
 ## Features
 
@@ -11,10 +17,12 @@ A self-hosted AI document summarizer and Q&A backend that processes documents lo
 - 💻 Local processing with no external APIs
 - ⚡ FastAPI backend ready for React frontend
 
+![Upload Demo](demo_pics/UploadPDF.png)
 ## Tech Stack
 
-- Backend Framework: FastAPI
-- AI Models:
+- **Frontend**: React/Next.js, TailwindCSS
+- **Backend**: FastAPI
+- **AI Models**:
   - Summarization: `t5-small` (~300MB)
     ```python
     summarizer = pipeline(
@@ -39,9 +47,10 @@ A self-hosted AI document summarizer and Q&A backend that processes documents lo
   - Vector Search: FAISS
 
 Total model size: ~640MB
-## Setup & Installation
 
-### Windows Environment Setup
+
+## Setup & Installation
+### Windows Environment Setup (Backend)
 1. Create virtual environment:
 ```bash
 python -m venv venv
@@ -56,6 +65,7 @@ venv\Scripts\activate
 ```bash
 pip install fastapi uvicorn python-multipart PyPDF2 transformers sentence-transformers faiss-cpu torch numpy
 ```
+or run `pip install -r requirements.txt` to install all the dependencies
 
 # Run the server
 ```bash
@@ -65,8 +75,25 @@ Server will be available at `http://127.0.0.1:8000`. If by chance it isn't that 
 
 > Chute (end) the virtual environment using `deactivate` command 
 
-## API Endpoints
+### Frontend Setup (Next.js)
+1. Navigate to frontend directory:
+cd `.\frontend\`
 
+2. Install Node.js dependencies:
+`npm install`
+
+3. Start development server:
+`npm run dev`
+
+Frontend available at: `http://localhost:3000`
+
+## Model Storage
+
+Models are cached in:
+- Windows: `C:\Users\<YourUsername>\.cache\huggingface\hub`
+- Linux/MacOS: `~/.cache/huggingface/hub`
+
+## API Endpoints
 ### Document Management
 
 - `POST /upload` - Upload PDF/text documents
@@ -79,7 +106,7 @@ Server will be available at `http://127.0.0.1:8000`. If by chance it isn't that 
 - `POST /document/{doc_id}/query` - Ask questions about document content
 - `GET /document/{doc_id}/chunks` - Get document chunks (debug)
 
-## Usage Example
+## Usage Example without frontend
 
 ```python
 import requests
