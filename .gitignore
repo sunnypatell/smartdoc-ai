@@ -1,0 +1,14 @@
+# Python-specific ignores
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment folder
+venv/
+
+# System files (macOS, etc.)
+.DS_Store
+
+# Logs and temporary files
+*.log
+tmp/
