@@ -7,7 +7,7 @@ import type React from "react" // Added import for React
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "SmartDoc by Sunny Patel",
+  title: "SmartDoc AI",
   description: "AI-powered document summarizer and Q&A system",
 }
 

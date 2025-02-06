@@ -21,7 +21,7 @@ const Footer = () => {
           </div>
 
           <div className="w-full md:w-1/3 text-center mt-4 md:mt-0">
-            <p className="text-sm">&copy; 2024 Sunny Patel</p>
+            <p className="text-sm">&copy; 2025 Sunny Patel</p>
             <p className="text-sm text-gray-600 mt-1">sunnypatel124555@gmail.com</p>
             <p className="text-sm text-gray-500 mt-2">This project is protected by copyright.</p>
             <Button
@@ -128,7 +128,7 @@ const Footer = () => {
 
               <h2 className="text-xl font-bold">Copyright Notice</h2>
               <p>
-                © 2024 Sunny Patel. All rights reserved. This demonstration project is protected by copyright. The
+                © 2025 Sunny Patel. All rights reserved. This demonstration project is protected by copyright. The
                 implementation details, architecture, and code structure are provided for demonstration purposes. Any
                 reproduction or distribution requires explicit permission from the author.
               </p>
