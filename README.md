@@ -35,7 +35,7 @@ venv\Scripts\activate
 
 3. Install required packages:
 ```bash
-pip install fastapi uvicorn python-multipart PyPDF2 transformers sentence-transformers faiss-cpu torch
+pip install fastapi uvicorn python-multipart PyPDF2 transformers sentence-transformers faiss-cpu torch numpy
 ```
 
 # Run the server

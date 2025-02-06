@@ -1,22 +1,29 @@
+'''
+Author: @Sunny Patel
+Github: @sunnypatell
+
+2025 All Rights Reserved by @sunnypatell.
+'''
+
 """
 SmartDoc – A Self‑Hosted AI Document Summarizer & Q&A Backend
 
 This FastAPI app provides endpoints to:
   • Upload documents (PDF or plain text)
-  • Retrieve a summary of the uploaded document (using recursive summarization for large texts)
-  • Ask questions about the document’s content (retrieving more context from FAISS)
+  • Retrieve a summary of the uploaded document (using recursive summarization with a high‑quality model)
+  • Answer questions about the document’s content (with increased context retrieval)
   • List documents and view their details
   • Retrieve the processed text chunks (for debugging or advanced UI use)
 
-Dependencies and packages used (all run locally):
+Dependencies (all run locally):
   - FastAPI, Uvicorn
-  - Transformers (using T5-small for summarization and distilbert-base-uncased-distilled-squad for QA)
-  - SentenceTransformer (all‑MiniLM‑L6‑v2 for embeddings)
+  - Transformers (using heavy models for quality)
+  - SentenceTransformer (for embeddings)
   - PyPDF2 for PDF text extraction
   - FAISS (faiss‑cpu) for vector search
   - NumPy
 
-Endpoints remain the same so you don’t need to update your frontend.
+All endpoints remain unchanged so your React/Next.js frontend needs no updates.
 """
 
 import io
@@ -36,7 +43,7 @@ from sentence_transformers import SentenceTransformer  # For computing embedding
 import faiss  # For vector (embedding) search
 
 # ------------------------------------------------------------------------------
-# Initialize FastAPI and Configure CORS (to allow calls from your React app)
+# Initialize FastAPI and Configure CORS
 # ------------------------------------------------------------------------------
 app = FastAPI(
     title="SmartDoc Backend API",
@@ -44,7 +51,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Allow all origins for demo purposes (adjust for production if needed).
+# Allow all origins for demo purposes.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -54,38 +61,39 @@ app.add_middleware(
 )
 
 # ------------------------------------------------------------------------------
-# In‑Memory Storage (For demo/portfolio purposes – in production, consider a persistent DB)
+# In‑Memory Storage (For demo/portfolio; in production use a persistent DB)
 # ------------------------------------------------------------------------------
-# 'documents' maps a document ID (int) to a dict with:
-#   - filename: Original file name
-#   - text: Full extracted text
-#   - chunks: List of text chunks (for summarization and QA)
+# 'documents' maps document IDs to a dict with:
+#   - filename: original file name
+#   - text: full extracted text
+#   - chunks: list of text chunks (for summarization and QA)
 #   - embeddings: NumPy array of embeddings for each chunk
 documents: Dict[int, Dict[str, Any]] = {}
 # 'faiss_indexes' maps document ID to a FAISS index instance.
 faiss_indexes: Dict[int, faiss.IndexFlatL2] = {}
-doc_id_counter = 1  # A simple counter to assign document IDs
+doc_id_counter = 1  # Simple counter for document IDs
 
 # ------------------------------------------------------------------------------
-# Load AI Models at Startup (same dependencies as originally used)
+# Load AI Models at Startup
 # ------------------------------------------------------------------------------
 print("Loading models... (this may take a few moments)")
 try:
-    # Summarization model: T5-small (you can swap to T5-base if you want improved results and have the CPU capacity)
+    # Use a more powerful summarization model:
+    # google/flan-t5-xl is instruction-tuned and produces richer summaries.
     summarizer = pipeline(
         "summarization",
-        model="t5-small",
-        tokenizer="t5-small",
+        model="google/flan-t5-xl",
+        tokenizer="google/flan-t5-xl",
         framework="pt"
     )
-    # Question Answering model: distilbert-base-uncased-distilled-squad
+    # For question answering, we choose a larger model for better accuracy.
     qa_model = pipeline(
         "question-answering",
-        model="distilbert-base-uncased-distilled-squad",
+        model="deepset/roberta-large-squad2",
         framework="pt"
     )
-    # Embedding model: SentenceTransformer using all-MiniLM-L6-v2
-    embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+    # For embeddings, we switch to a more accurate model.
+    embedding_model = SentenceTransformer("all-mpnet-base-v2")
 except Exception as e:
     print(f"Error loading models: {e}")
     raise
@@ -97,7 +105,7 @@ except Exception as e:
 def extract_text(file: UploadFile) -> str:
     """
     Extract text from an uploaded file.
-    Supports PDF files (using PyPDF2) and plain text files.
+    Supports PDF (via PyPDF2) and plain text files.
     """
     filename = file.filename.lower()
     if filename.endswith(".pdf"):
@@ -108,12 +116,11 @@ def extract_text(file: UploadFile) -> str:
                 page_text = page.extract_text()
                 if page_text:
                     text += page_text + "\n"
-            file.file.seek(0)  # Reset pointer for potential future use
+            file.file.seek(0)
             return text
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"PDF processing error: {str(e)}")
     else:
-        # Assume UTF-8 encoded plain text file.
         try:
             content = file.file.read().decode("utf-8")
             file.file.seek(0)
@@ -125,7 +132,7 @@ def extract_text(file: UploadFile) -> str:
 def chunk_text(text: str, chunk_size: int = 500) -> List[str]:
     """
     Split text into non-overlapping chunks based on character count.
-    (For production, you might want token-based splitting.)
+    (For production, consider token-based splitting.)
     """
     text = text.strip()
     if not text:
@@ -144,7 +151,7 @@ def create_embeddings(chunks: List[str]) -> np.ndarray:
 
 def create_faiss_index(embeddings: np.ndarray) -> faiss.IndexFlatL2:
     """
-    Build a FAISS index from embeddings using L2 (Euclidean) distance.
+    Build a FAISS index from the embeddings using L2 (Euclidean) distance.
     """
     dimension = embeddings.shape[1]
     index = faiss.IndexFlatL2(dimension)
@@ -152,44 +159,60 @@ def create_faiss_index(embeddings: np.ndarray) -> faiss.IndexFlatL2:
     return index
 
 
-def recursive_summarize(text: str, threshold: int = 1000, max_length: int = 150, min_length: int = 40,
-                        recursion_depth: int = 0, max_recursion: int = 3) -> str:
+def recursive_summarize(text: str,
+                        threshold: int = 800,
+                        max_length: int = 300,
+                        min_length: int = 150,
+                        recursion_depth: int = 0,
+                        max_recursion: int = 2) -> str:
     """
     Recursively summarize the input text until it is below a specified threshold.
     
-    If the text is shorter than 'threshold' characters or if maximum recursion depth is reached,
-    the summarizer is applied directly.
+    If the text appears to be a resume/CV, a custom prompt is added to extract key details.
     
-    Otherwise, the text is split into chunks (here, of size 800 characters), each chunk is summarized,
-    the summaries are concatenated, and the process repeats.
+    Parameters:
+      - threshold: Character length below which direct summarization is applied.
+      - max_length/min_length: Control the summary output length.
+      - recursion_depth: Current recursion level.
+      - max_recursion: Maximum allowed recursion depth.
     """
+    # For resumes/CVs, add a prompt to extract key details.
+    lower_text = text.lower()
+    if "resume" in lower_text or "curriculum vitae" in lower_text or "cv" in lower_text:
+        prompt_prefix = "Summarize this resume with key details on education, experience, skills, certifications, and projects: "
+    else:
+        prompt_prefix = "summarize: "
+    
     if len(text) < threshold or recursion_depth >= max_recursion:
         try:
-            summary_output = summarizer(text, max_length=max_length, min_length=min_length, do_sample=False)
+            summary_output = summarizer(prompt_prefix + text, max_length=max_length, min_length=min_length, do_sample=False)
             return summary_output[0]['summary_text']
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Summarization error: {str(e)}")
     else:
+        # Split text into larger chunks to preserve context.
         chunks = chunk_text(text, chunk_size=800)
         summaries = []
         for chunk in chunks:
             if chunk.strip():
                 try:
-                    chunk_summary = summarizer(chunk, max_length=max_length, min_length=min_length, do_sample=False)
+                    chunk_summary = summarizer(prompt_prefix + chunk, max_length=max_length, min_length=min_length, do_sample=False)
                     summaries.append(chunk_summary[0]['summary_text'])
                 except Exception as e:
-                    # Skip any chunk that fails summarization.
-                    continue
+                    continue  # Skip failed chunks.
         if not summaries:
-            # Fallback: try summarizing the entire text directly.
             try:
-                return summarizer(text, max_length=max_length, min_length=min_length, do_sample=False)[0]['summary_text']
+                return summarizer(prompt_prefix + text, max_length=max_length, min_length=min_length, do_sample=False)[0]['summary_text']
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Summarization error: {str(e)}")
         combined = " ".join(summaries)
         # Recursively summarize the combined summaries.
-        return recursive_summarize(combined, threshold=threshold, max_length=max_length, min_length=min_length,
-                                   recursion_depth=recursion_depth + 1, max_recursion=max_recursion)
+        return recursive_summarize(combined,
+                                   threshold=threshold,
+                                   max_length=max_length,
+                                   min_length=min_length,
+                                   recursion_depth=recursion_depth + 1,
+                                   max_recursion=max_recursion)
 
 # ------------------------------------------------------------------------------
 # Pydantic Models for Request & Response Schemas
@@ -219,7 +242,7 @@ class DocumentInfo(BaseModel):
     num_chunks: int
 
 # ------------------------------------------------------------------------------
-# API Endpoints
+# API Endpoints (Endpoints remain unchanged)
 # ------------------------------------------------------------------------------
 
 @app.post("/upload", response_model=UploadResponse)
@@ -267,7 +290,7 @@ async def list_documents():
     """
     GET /documents
     --------------
-    Lists all uploaded documents with basic metadata.
+    List all uploaded documents with basic metadata.
     
     Frontend: Use a GET request to display a list of documents.
     """
@@ -287,7 +310,7 @@ async def get_document_info(doc_id: int):
     """
     GET /document/{doc_id}
     ----------------------
-    Retrieves metadata for a specific document.
+    Retrieve metadata for a specific document.
     
     Frontend: Use this to display document details.
     """
@@ -307,12 +330,11 @@ async def summarize_document(doc_id: int):
     """
     GET /document/{doc_id}/summary
     ------------------------------
-    Generates a summary for the document identified by doc_id.
+    Generate a summary for the document identified by doc_id.
     
     Process:
-      - For shorter documents, a direct summarization is performed.
-      - For larger documents, a recursive summarization is applied so that
-        the full context is taken into account.
+      - For shorter documents, direct summarization is applied.
+      - For larger documents, recursive summarization is used to capture full context.
     
     Frontend: Make a GET request to display the summary.
     """
@@ -320,7 +342,10 @@ async def summarize_document(doc_id: int):
         raise HTTPException(status_code=404, detail="Document not found.")
     
     text = documents[doc_id]["text"]
-    summary = recursive_summarize(text, threshold=1000, max_length=150, min_length=40)
+    summary = recursive_summarize(text,
+                                  threshold=800,
+                                  max_length=300,
+                                  min_length=150)
     return SummaryResponse(doc_id=doc_id, summary=summary)
 
 
@@ -329,15 +354,15 @@ async def query_document(doc_id: int, query_request: QueryRequest):
     """
     POST /document/{doc_id}/query
     -----------------------------
-    Answers a user’s question about the specified document.
+    Answer a user’s question about the specified document.
     
     Process:
-      1. Computes an embedding for the input query.
-      2. Uses the FAISS index to retrieve the top-k most similar text chunks.
-      3. Concatenates these chunks to form a context.
-      4. Runs the QA model with the context and query to generate an answer.
+      1. Compute an embedding for the query.
+      2. Use the FAISS index to retrieve the top-k similar text chunks.
+      3. Concatenate these chunks to form context.
+      4. Run the QA model with the context and query to generate an answer.
     
-    Frontend: Send a POST request with a JSON body { "query": "Your question here" }.
+    Frontend: Send a POST request with JSON body { "query": "Your question here" }.
     """
     if doc_id not in documents:
         raise HTTPException(status_code=404, detail="Document not found.")
@@ -345,7 +370,7 @@ async def query_document(doc_id: int, query_request: QueryRequest):
     query = query_request.query
     query_embedding = embedding_model.encode([query], convert_to_numpy=True)
 
-    # Increase 'k' to retrieve more context (here we use 7 chunks)
+    # Retrieve more context by increasing k (here, 7 chunks).
     index = faiss_indexes[doc_id]
     k = 7
     distances, indices = index.search(query_embedding, k)
@@ -385,7 +410,7 @@ async def get_document_chunks(doc_id: int):
     """
     GET /document/{doc_id}/chunks
     -----------------------------
-    Retrieves the processed text chunks for the specified document.
+    Retrieve the processed text chunks for the specified document.
     
     Frontend: Useful for debugging or advanced UI features.
     """
