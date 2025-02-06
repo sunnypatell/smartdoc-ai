@@ -29,6 +29,7 @@ const Settings = () => {
         <div>
           <label className="block text-sm font-medium mb-2">Font Size</label>
           <select
+            title="Font Size"
             value={fontSize}
             onChange={(e) => setFontSize(e.target.value)}
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
