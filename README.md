@@ -44,6 +44,8 @@ python smartdoc_backend.py
 ```
 Server will be available at `http://localhost:8000`
 
+> Chute (end) the virtual environment using `deactivate` command 
+
 ## API Endpoints
 
 ### Document Management
