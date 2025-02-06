@@ -1,21 +1,37 @@
 MIT License
 
-Copyright (c) 2025 Sunny Patel
+Copyright (c) 2025 Sunny Patel - SmartDoc AI Project
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Attribution and Reference Requirements:
+   - Any use of this Software in academic or research work must cite:
+     "SmartDoc AI by Sunny Patel (2025)"
+   - Commercial use must include visible attribution to "SmartDoc AI" and link to the original repository
+   - Modified versions must clearly state they are derived from SmartDoc AI
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Promotion and Marketing:
+   - Use of SmartDoc AI name, logo, or branding in promotional materials requires explicit written permission
+   - Public endorsements implying association with SmartDoc AI must be pre-approved
+   - Derivative works must use distinct branding to avoid confusion
+
+3. Usage Restrictions:
+   - The Software may not be used to train competing AI models
+   - Integration into closed-source products requires notification to original author
+   - Usage in critical systems requires disclosure of SmartDoc AI components
+
+4. Contributions:
+   - Contributors retain copyright of contributed code
+   - Contributions automatically grant project same MIT license rights
+   - Major contributions must be documented in CONTRIBUTORS.md
+
+The above copyright notice, permission notice and all conditions shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For permissions beyond this license or questions contact:
+[Your Contact Information]
+
+This license is governed by the laws of [Your Jurisdiction].
+
+Version 1.0 - Last Updated: 2025
