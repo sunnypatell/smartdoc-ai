@@ -1,3 +1,10 @@
+'''
+Author: @Sunny Patel
+Github: @sunnypatell
+
+2025 All Rights Reserved by @sunnypatell.
+'''
+
 """
 SmartDoc – A Self‑Hosted AI Document Summarizer & Q&A Backend
 
@@ -397,7 +404,6 @@ async def get_document_chunks(doc_id: int):
     if doc_id not in documents:
         raise HTTPException(status_code=404, detail="Document not found.")
     return {"doc_id": doc_id, "chunks": documents[doc_id]["chunks"]}
-
 
 # ------------------------------------------------------------------------------
 # Main Entry Point
