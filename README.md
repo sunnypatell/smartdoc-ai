@@ -15,11 +15,30 @@ A self-hosted AI document summarizer and Q&A backend that processes documents lo
 
 - Backend Framework: FastAPI
 - AI Models:
-  - Summarization: `t5-small`
-  - Q&A: `distilbert-base-uncased-distilled-squad`
-  - Embeddings: `all-MiniLM-L6-v2`
+  - Summarization: `t5-small` (~300MB)
+    ```python
+    summarizer = pipeline(
+        "summarization",
+        model="t5-small",
+        tokenizer="t5-small",
+        framework="pt"
+    )
+    ```
+  - Q&A: `distilbert-base-uncased-distilled-squad` (~250MB)
+    ```python
+    qa_model = pipeline(
+        "question-answering", 
+        model="distilbert-base-uncased-distilled-squad",
+        framework="pt"
+    )
+    ```
+  - Embeddings: `all-MiniLM-L6-v2` (~90MB)
+    ```python
+    embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+    ```
   - Vector Search: FAISS
 
+Total model size: ~640MB
 ## Setup & Installation
 
 ### Windows Environment Setup
