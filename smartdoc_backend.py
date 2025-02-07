@@ -409,5 +409,5 @@ async def get_document_chunks(doc_id: int):
 # Main Entry Point
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Run the server on host 0.0.0.0 and port 8000.
+    # Run the server on host 127.0.0.1 and port 8000.
     uvicorn.run(app, host="0.0.0.0", port=8000)
